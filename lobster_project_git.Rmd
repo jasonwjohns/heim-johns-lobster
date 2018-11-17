@@ -21,7 +21,7 @@ traps <- read_csv("lobster_traps.csv")
 ```
 
 ```{r}
-
+# Lobster abundances totals at all five sites 2012-2017
 abundance_summary <- abundance %>% 
   ggplot(aes(x = YEAR, y = COUNT, group = SITE, fill = SITE, color = SITE)) +
   stat_summary(fun.y = sum, geom = "line") +
@@ -33,17 +33,20 @@ abundance_summary <- abundance %>%
        y = "Counts")
 
 abundance_summary
+
+# run a t-test to compare 2012 & 2017 at MPAs & non-MPAs
 ```
 
 
 ```{r}
-
+# Trap totals at each site 2012-2017. There were no traps at the MPAs (IVEE & NAPL)
 traps_summary <- traps %>% 
-  filter(SITE == "IVEE", SITE == "CARP", SITE == "AQUE", SITE == "MOHK", SITE == "NAPL") %>% 
+  filter(SITE != "ABUR", SITE != "GOLB", SITE != "AHND", SITE != "AHND to AQUE", SITE != "IVEE", SITE != "NAPL") %>% 
+  filter(TRAPS != "-99999") %>% 
   ggplot(aes(x = YEAR, y = TRAPS, group = SITE, fill = SITE, color = SITE)) +
   stat_summary(fun.y = sum, geom = "line") +
   theme_classic() +
-  scale_y_continuous(expand = c(0,0), limits = c(0,1200)) +
+  scale_y_continuous(expand = c(0,0),  limits = c(0,1300)) +
   scale_x_continuous(expand = c(0,0)) +
   labs(title = "Lobster abundance counts at 5 locations from 2012-2017",
   x = "Year",
