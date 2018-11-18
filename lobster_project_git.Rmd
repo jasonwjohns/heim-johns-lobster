@@ -22,19 +22,128 @@ traps <- read_csv("lobster_traps.csv")
 
 ```{r, echo = FALSE}
 # Lobster abundances totals at all five sites 2012-2017
-abundance_summary <- abundance %>% 
+abundance_line_total <- abundance %>% 
   ggplot(aes(x = YEAR, y = COUNT, group = SITE, fill = SITE, color = SITE)) +
   stat_summary(fun.y = sum, geom = "line") +
   theme_classic() +
   scale_y_continuous(expand = c(0,0), limits = c(0,800)) +
   scale_x_continuous(expand = c(0,0)) +
-  labs(title = "Lobster abundance counts at 5 locations from 2012-2017",
+  labs(title = "Total lobster abundance counts at 5 locations from 2012-2017",
        x = "Year",
        y = "Counts") 
 
-abundance_summary
+abundance_line_total
 
+# Create a summary table for abundances in 2012 at each site
+abundance_sum_2012 <- abundance %>%
+  filter(YEAR == "2012") %>% 
+  group_by(SITE) %>%
+  summarize(Mean_count= mean(COUNT),Standard_deviation= sd(COUNT), Sample_size= length(COUNT), Standard_error= Standard_deviation/sqrt(Sample_size))
 
+abundance_sum_2012
+
+# Create a summary table for abundances in 2017 at each site
+abundance_sum_2017 <- abundance %>%
+  filter(YEAR == "2017") %>% 
+  group_by(SITE) %>%
+  summarize(Mean_count= mean(COUNT),Standard_deviation= sd(COUNT), Sample_size= length(COUNT), Standard_error= Standard_deviation/sqrt(Sample_size))
+
+abundance_sum_2017
+
+# Create a summary table for abundances at each site
+abundance_sum <- abundance %>%
+  mutate(Mean_count= mean(COUNT),
+         Standard_deviation= sd(COUNT), 
+         Sample_size= length(COUNT), 
+         Standard_error= Standard_deviation/sqrt(Sample_size))
+abundance_sum
+
+  
+# Lobster abundance means at all five sites 2012-2017
+abundance_col_mean <- abundance %>%
+  ggplot(aes(x = YEAR, y = COUNT, group = SITE, fill = SITE, color = SITE)) +
+  stat_summary(fun.y = mean, geom = "line") +
+  theme_classic() +
+  scale_y_continuous(expand = c(0,0), limits = c(0,2)) +
+  scale_x_continuous(expand = c(0,0)) +
+  labs(title = "Mean of lobster abundance counts at 5 locations from 2012-2017",
+       x = "Year",
+       y = "Mean counts")
+
+abundance_col_mean
+
+# Lobster abundance totals at all 5 sites 2017
+abundance_2017 <- abundance %>% 
+  filter(YEAR == 2017)
+
+abundance_2012 <- abundance %>%
+  filter(YEAR == 2012)
+
+# Use a one-way ANOVA to test for a difference between any two of the sites in 2017
+
+abundance_2017_aov <- aov(SIZE ~ SITE, data = abundance_2017)
+summary(abundance_2017_aov)
+
+# P-value < 2e-16, meaning at least two samples of lobster carapance length were taken from sites with different means. Which ones are different? Are all five different from each other? Or something else? 
+
+# Need to run a Post-hoc Tukey's test to find where the differences are. 
+
+abundance_2017_tukey <- TukeyHSD(abundance_2017_aov) 
+abundance_2017_tukey
+
+# Use a one-way ANOVA to test for a difference between any two of the sites in 2016
+
+abundance_2012_aov <- aov(SIZE ~ SITE, data = abundance_2012)
+summary(abundance_2012_aov)
+
+# P-value < 2e-16, meaning at least two samples of lobster carapance length were taken from sites with different means. Which ones are different? Are all five different from each other? Or something else? 
+
+# Need to run a Post-hoc Tukey's test to find where the differences are. 
+
+abundance_2012_tukey <- TukeyHSD(abundance_2012_aov) 
+abundance_2012_tukey
+
+# Column graph to show differences between sites in 2012
+abundance_2012_col <-ggplot(abundance_sum_2012, aes(x = SITE, y = Mean_count)) +
+  geom_col(aes(fill = SITE)) +
+  geom_errorbar(aes(ymin= Mean_count-Standard_error, ymax= Mean_count+Standard_error), width=.2) + 
+  theme_classic() +
+  theme(legend.position= "none") +
+  labs(x= "Location", y= "Mean abundance") +
+  scale_y_continuous(limit= c(0,4), expand=c(0,0)) +
+  scale_x_discrete(labels=c("AQUE" = "Arroyo Quemado\nn=55", 
+                            "NAPL" = "Naples Reef\nn=37",
+                            "MOHK" = "Mohawk Reef\nn=58",
+                            "IVEE" = "Isla Vista\nn=48",
+                            "CARP" = "Carpinteria\nn=86")) +
+  annotate("text", x = 1, y = 2, label = "A,C", family = "Times New Roman") +
+  annotate("text", x = 2, y = 2, label = "B", family = "Times New Roman") +
+  annotate("text", x = 3, y = 2, label = "C", family = "Times New Roman") +
+  annotate("text", x = 4, y = 2, label = "B", family = "Times New Roman") +
+  annotate("text", x = 5, y = 2, label = "D", family = "Times New Roman")
+
+abundance_2012_col
+
+# Column graph to show differences between sites in 2017
+abundance_2017_col <-ggplot(abundance_sum_2017, aes(x = SITE, y = Mean_count)) +
+  geom_col(aes(fill = SITE)) +
+  geom_errorbar(aes(ymin= Mean_count-Standard_error, ymax= Mean_count+Standard_error), width=.2) + 
+  theme_classic() +
+  theme(legend.position= "none") +
+  labs(x= "Location", y= "Mean abundance") +
+  scale_y_continuous(limit= c(0,4), expand=c(0,0)) +
+  scale_x_discrete(labels=c("AQUE" = "Arroyo Quemado\nn=62", 
+                            "NAPL" = "Naples Reef\nn=109",
+                            "MOHK" = "Mohawk Reef\nn=89",
+                            "IVEE" = "Isla Vista\nn=352",
+                            "CARP" = "Carpinteria\nn=319")) +
+  annotate("text", x = 1, y = 2, label = "A", family = "Times New Roman") +
+  annotate("text", x = 2, y = 3, label = "B", family = "Times New Roman") +
+  annotate("text", x = 3, y = 3, label = "B", family = "Times New Roman") +
+  annotate("text", x = 4, y = 3, label = "B", family = "Times New Roman") +
+  annotate("text", x = 5, y = 2, label = "C", family = "Times New Roman")
+
+abundance_2017_col
 
 # Creating a data frame for 2012 & 2017 IVEE
 IVEE_COUNTS_2012 <- abundance %>% 
@@ -124,39 +233,131 @@ non_MPA_COUNT_2017 <- abundance %>%
 non_MPA_COUNT_2017
 
 # t-test to determine if significant difference between MPA counts 2012 & 2017
-MPA_2012_2017_t_test <- t.test(MPA_COUNT_2012$COUNT, MPA_COUNT_2017$COUNT, var.equal = TRUE)
+MPA_2012_2017_t_test <- t.test(MPA_COUNT_2012$COUNT, MPA_COUNT_2017$COUNT, var.equal = TRUE, alternative = "less")
 MPA_2012_2017_t_test
 
 # t-test to determine if significant difference between non-MPA counts 2012 & 2017
-non_MPA_2012_2017_t_test <- t.test(non_MPA_COUNT_2012$COUNT, non_MPA_COUNT_2017$COUNT, var.equal = TRUE)
+non_MPA_2012_2017_t_test <- t.test(non_MPA_COUNT_2012$COUNT, non_MPA_COUNT_2017$COUNT, var.equal = TRUE, alternative = "less")
 non_MPA_2012_2017_t_test
 
 # t-test to determine if significant difference between MPA & non-MPA counts 2012
-MPA_vs_non_MPA_2012_t_test <- t.test(MPA_COUNT_2012$COUNT, non_MPA_COUNT_2012$COUNT, var.equal = TRUE)
+MPA_vs_non_MPA_2012_t_test <- t.test(MPA_COUNT_2012$COUNT, non_MPA_COUNT_2012$COUNT, var.equal = TRUE, alternative = "less")
 MPA_vs_non_MPA_2012_t_test
 
 # t-test to determine if significant difference between MPA & non-MPA counts 2017
-MPA_vs_non_MPA_2017_t_test <- t.test(MPA_COUNT_2017$COUNT, non_MPA_COUNT_2017$COUNT, var.equal = TRUE)
+MPA_vs_non_MPA_2017_t_test <- t.test(MPA_COUNT_2017$COUNT, non_MPA_COUNT_2017$COUNT, var.equal = TRUE, alternative = "less")
 MPA_vs_non_MPA_2017_t_test
 
 ```
 
 
 ```{r}
+#DF traps in 2012
+traps_2012 <- traps %>%
+  filter(YEAR == "2012") %>% 
+  filter(SITE != "ABUR", SITE != "GOLB", SITE != "AHND", SITE != "AHND to AQUE", SITE != "IVEE", SITE != "NAPL")
+traps_2012
+
+#DF traps in 2017
+traps_2017 <- traps %>%
+  filter(YEAR == "2017") %>% 
+  filter(SITE != "ABUR", SITE != "GOLB", SITE != "AHND", SITE != "AHND to AQUE", SITE != "IVEE", SITE != "NAPL") 
+traps_2017
+
+# Create a summary table for traps in 2012 at each site
+traps_sum_2012 <- traps_2012 %>%
+  group_by(SITE) %>%
+  summarize(Mean_traps= mean(TRAPS),Standard_deviation= sd(TRAPS), Sample_size= length(TRAPS), Standard_error= Standard_deviation/sqrt(Sample_size))
+
+traps_sum_2012
+
+# Create a summary table for traps in 2017 at each site
+traps_sum_2017 <- traps_2017 %>%
+  group_by(SITE) %>%
+  summarize(Mean_traps= mean(TRAPS),Standard_deviation= sd(TRAPS), Sample_size= length(TRAPS), Standard_error= Standard_deviation/sqrt(Sample_size))
+
+traps_sum_2017
+
+# Create a summary table for traps at each site
+traps_sum <- traps %>%
+  mutate(Mean_traps= mean(TRAPS),
+         Standard_deviation= sd(TRAPS), 
+         Sample_size= length(TRAPS), 
+         Standard_error= Standard_deviation/sqrt(Sample_size))
+traps_sum
+
 # Trap totals at each site 2012-2017. There were no traps at the MPAs (IVEE & NAPL)
 traps_summary <- traps %>% 
   filter(SITE != "ABUR", SITE != "GOLB", SITE != "AHND", SITE != "AHND to AQUE", SITE != "IVEE", SITE != "NAPL") %>% 
   filter(TRAPS != "-99999") %>% 
   ggplot(aes(x = YEAR, y = TRAPS, group = SITE, fill = SITE, color = SITE)) +
-  stat_summary(fun.y = sum, geom = "line") +
+  stat_summary(fun.y = mean, geom = "line") +
   theme_classic() +
-  scale_y_continuous(expand = c(0,0),  limits = c(0,1300)) +
+  scale_y_continuous(expand = c(0,0),  limits = c(0,4)) +
   scale_x_continuous(expand = c(0,0)) +
-  labs(title = "Lobster trap counts at 5 locations from 2012-2017",
+  labs(title = "Mean lobster trap counts at 5 locations from 2012-2017",
   x = "Year",
   y = "# of traps")
 
 traps_summary
 
+
+# Use a one-way ANOVA to test for a difference in traps between any two of the sites in 2017
+
+traps_2017_aov <- aov(TRAPS ~ SITE, data = traps_2017)
+summary(traps_2017_aov)
+
+# P-value < 2e-16, meaning at least two samples of lobster carapance length were taken from sites with different means. Which ones are different? Are all five different from each other? Or something else? 
+
+# Need to run a Post-hoc Tukey's test to find where the differences are. 
+
+traps_2017_tukey <- TukeyHSD(traps_2017_aov) 
+traps_2017_tukey
+
+traps_2017_col <-ggplot(traps_sum_2017, aes(x = SITE, y = Mean_traps)) +
+  geom_col(aes(fill = SITE)) +
+  geom_errorbar(aes(ymin= Mean_traps-Standard_error, ymax= Mean_traps+Standard_error), width=.2) + 
+  theme_classic() +
+  theme(legend.position= "none") +
+  labs(x= "Location", y= "Mean traps") +
+  scale_y_continuous(limit= c(0,4), expand=c(0,0)) +
+  scale_x_discrete(labels=c("AQUE" = "Arroyo Quemado\nn=66", 
+                            "MOHK" = "Mohawk Reef\nn=36",
+                            "CARP" = "Carpinteria\nn=66")) +
+  annotate("text", x = 1, y = 3.5, label = "A", family = "Times New Roman") +
+  annotate("text", x = 2, y = 3.5, label = "B", family = "Times New Roman") +
+  annotate("text", x = 3, y = 3.5, label = "B", family = "Times New Roman")
+  
+
+traps_2017_col
+
+# Use a one-way ANOVA to test for a difference between any two of the sites in 2012
+
+traps_2012_aov <- aov(TRAPS ~ SITE, data = traps_2012)
+summary(traps_2012_aov)
+
+# P-value < 2e-16, meaning at least two samples of lobster carapance length were taken from sites with different means. Which ones are different? Are all five different from each other? Or something else? 
+
+# Need to run a Post-hoc Tukey's test to find where the differences are. 
+
+traps_2012_tukey <- TukeyHSD(traps_2012_aov) 
+traps_2012_tukey
+
+traps_2012_col <-ggplot(traps_sum_2012, aes(x = SITE, y = Mean_traps)) +
+  geom_col(aes(fill = SITE)) +
+  geom_errorbar(aes(ymin= Mean_traps-Standard_error, ymax= Mean_traps+Standard_error), width=.2) + 
+  theme_classic() +
+  theme(legend.position= "none") +
+  labs(x= "Location", y= "Mean traps") +
+  scale_y_continuous(limit= c(0,13), expand=c(0,0)) +
+  scale_x_discrete(labels=c("AQUE" = "Arroyo Quemado\nn=110", 
+                            "MOHK" = "Mohawk Reef\nn=60",
+                            "CARP" = "Carpinteria\nn=100")) +
+  annotate("text", x = 1, y = 12, label = "A", family = "Times New Roman") +
+  annotate("text", x = 2, y = 12, label = "B", family = "Times New Roman") +
+  annotate("text", x = 3, y = 12, label = "B", family = "Times New Roman")
+  
+
+traps_2012_col
 ```
 
