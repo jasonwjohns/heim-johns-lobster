@@ -222,6 +222,8 @@ NAPL_2012_mean <- mean(lobster_size_NAPL_2012$SIZE)
 
 NAPL_2012_sd <-sd(lobster_size_NAPL_2012$SIZE)
 
+NAPL_2017_mean - NAPL_2012_mean
+
 # Run a one-sided t-test for to see if size in 2017 is greater than in 2012
 
 lobster_NAPL_ttest<- t.test(lobster_size_NAPL_2017$SIZE, lobster_size_NAPL_2012$SIZE, var.equal= TRUE)
@@ -240,7 +242,7 @@ effect_size <- cohen.d(NAPL_2017_vector,NAPL_2012_vector)
 effect_size
 
 ```
-Mean lobsters carapace length (mm) in 2017  [`r round(IVEE_2017_mean,2)` ±  `r round(IVEE_2017_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=26] was not signficantly different than in 2012 [`r round(IVEE_2012_mean,2)` ±  `r round(IVEE_2012_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=606] at Isla Vista [t(`r round(lobster_IVEE_ttest$parameter,2)`) = `r round(lobster_IVEE_ttest$statistic,2)`, p < `r round(lobster_IVEE_ttest$p.value,3)`, $\alpha$ = 0.05]. The effect size is moderate (Cohen's d= 0.38). From the samples, lobster carapace length in 2017 was approximately 5.38 mm greater than lobster caparace length in 2012. 
+Mean lobsters carapace length (mm) in 2017  [`r round(NAPL_2017_mean,2)` ±  `r round(NAPL_2017_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=6] was not signficantly different than in 2012 [`r round(NAPL_2012_mean,2)` ±  `r round(NAPL_2012_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=112] at Naples Reef [t(`r round(lobster_IVEE_ttest$parameter,2)`) = `r round(lobster_NAPL_ttest$statistic,2)`, p < `r round(lobster_NAPL_ttest$p.value,3)`, $\alpha$ = 0.05]. The effect size is small (Cohen's d= 0.28). From the samples, lobster carapace length in 2017 was approximately 3.23 mm greater than lobster caparace length in 2012. 
 
 ```{r}
 
@@ -258,10 +260,32 @@ lobster_AQUE_ttest<- t.test(lobster_size_AQUE_2017$SIZE, lobster_size_AQUE_2012$
 
 lobster_AQUE_ttest
 
-# Lobster sizes at NAPL in 2017 are not significantly different than in 2012
+# Find the mean and sd for AQUE for 2012 and 2017
+
+AQUE_2017_mean <- mean(lobster_size_AQUE_2017$SIZE)
+
+AQUE_2017_sd <-sd(lobster_size_AQUE_2017$SIZE)
+ 
+AQUE_2012_mean <- mean(lobster_size_AQUE_2012$SIZE)
+
+AQUE_2012_sd <-sd(lobster_size_AQUE_2012$SIZE)
+
+AQUE_2017_mean - AQUE_2012_mean
+
+# Lobster sizes at AQUE in 2017 are not significantly different than in 2012
+
+AQUE_2017_vector <- lobster_size_AQUE_2017 %>%
+  pull(SIZE)
+
+AQUE_2012_vector <- lobster_size_AQUE_2012 %>%
+  pull(SIZE)
+
+effect_size <- cohen.d(AQUE_2017_vector,AQUE_2012_vector)
+effect_size
+
 
 ```
--need to write significance statment
+Mean lobsters carapace length (mm) in 2017  [`r round(AQUE_2017_mean,2)` ±  `r round(AQUE_2017_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=38] was not signficantly different than in 2012 [`r round(AQUE_2012_mean,2)` ±  `r round(AQUE_2012_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=67] at Naples Reef [t(`r round(lobster_AQUE_ttest$parameter,2)`) = `r round(lobster_AQUE_ttest$statistic,2)`, p < `r round(lobster_AQUE_ttest$p.value,3)`, $\alpha$ = 0.05]. The effect size is small (Cohen's d= 0.26). From the samples, lobster carapace length in 2017 was approximately 2.90 mm greater than lobster caparace length in 2012. 
 
 ```{r}
 
@@ -279,9 +303,33 @@ lobster_CARP_ttest<- t.test(lobster_size_CARP_2017$SIZE, lobster_size_CARP_2012$
 
 lobster_CARP_ttest
 
+# Find the mean and sd for CARP for 2012 and 2017
+
+CARP_2017_mean <- mean(lobster_size_CARP_2017$SIZE)
+
+CARP_2017_sd <-sd(lobster_size_CARP_2017$SIZE)
+ 
+CARP_2012_mean <- mean(lobster_size_CARP_2012$SIZE)
+
+CARP_2012_sd <-sd(lobster_size_CARP_2012$SIZE)
+
+CARP_2017_mean - CARP_2012_mean
+
+# Lobster sizes at CARP in 2017 are not significantly different than in 2012
+
+CARP_2017_vector <- lobster_size_CARP_2017 %>%
+  pull(SIZE)
+
+CARP_2012_vector <- lobster_size_CARP_2012 %>%
+  pull(SIZE)
+
+effect_size <- cohen.d(CARP_2017_vector,CARP_2012_vector)
+effect_size
+
+
 # Lobster sizes at CARP in 2017 are not significantly greater than in 2012
 ```
--need to write significance statment
+Mean lobsters carapace length (mm) in 2017  [`r round(CARP_2017_mean,2)` ±  `r round(CARP_2017_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=78] was not signficantly different than in 2012 [`r round(CARP_2012_mean,2)` ±  `r round(CARP_2012_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=705] at Naples Reef [t(`r round(lobster_AQUE_ttest$parameter,2)`) = `r round(lobster_CARP_ttest$statistic,2)`, p < `r round(lobster_CARP_ttest$p.value,3)`, $\alpha$ = 0.05]. The effect size is small (Cohen's d= -0.16). From the samples, lobster carapace length in 2017 was approximately 2.13 mm less than lobster caparace length in 2012. 
 
 ```{r}
 # One-sided t-test for MOHK nonMPA 
@@ -299,9 +347,32 @@ lobster_MOHK_ttest<- t.test(lobster_size_MOHK_2017$SIZE, lobster_size_MOHK_2012$
 lobster_MOHK_ttest
 
 # Lobster sizes are signficantly different at MOHK in 2012 and 2017
-```
--need to write significance statment
 
+# Find the mean and sd for MOHK for 2012 and 2017
+
+MOHK_2017_mean <- mean(lobster_size_MOHK_2017$SIZE)
+
+MOHK_2017_sd <-sd(lobster_size_MOHK_2017$SIZE)
+ 
+MOHK_2012_mean <- mean(lobster_size_MOHK_2012$SIZE)
+
+MOHK_2012_sd <-sd(lobster_size_MOHK_2012$SIZE)
+
+MOHK_2017_mean - MOHK_2012_mean
+
+# Lobster sizes at MOHK in 2017 are not significantly different than in 2012
+
+MOHK_2017_vector <- lobster_size_MOHK_2017 %>%
+  pull(SIZE)
+
+MOHK_2012_vector <- lobster_size_MOHK_2012 %>%
+  pull(SIZE)
+
+effect_size <- cohen.d(MOHK_2017_vector,MOHK_2012_vector)
+effect_size
+
+```
+Mean lobsters carapace length (mm) in 2017  [`r round(MOHK_2017_mean,2)` ±  `r round(MOHK_2017_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=83] was signficantly less than in 2012 [`r round(MOHK_2012_mean,2)` ±  `r round(MOHK_2012_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=178] at Naples Reef [t(`r round(lobster_MOHK_ttest$parameter,2)`) = `r round(lobster_MOHK_ttest$statistic,2)`, p < `r round(lobster_MOHK_ttest$p.value,3)`, $\alpha$ = 0.05]. The effect size is moderate (Cohen's d= -0.54). From the samples, lobster carapace length in 2017 was approximately 5.25 mm less than lobster caparace length in 2012. 
 
 #4 Proportion of legal lobsters at the five sites
 
