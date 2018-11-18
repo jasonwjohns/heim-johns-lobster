@@ -20,7 +20,7 @@ traps <- read_csv("lobster_traps.csv")
 
 ```
 
-```{r}
+```{r, echo = FALSE}
 # Lobster abundances totals at all five sites 2012-2017
 abundance_summary <- abundance %>% 
   ggplot(aes(x = YEAR, y = COUNT, group = SITE, fill = SITE, color = SITE)) +
@@ -30,25 +30,114 @@ abundance_summary <- abundance %>%
   scale_x_continuous(expand = c(0,0)) +
   labs(title = "Lobster abundance counts at 5 locations from 2012-2017",
        x = "Year",
-       y = "Counts") %>% 
+       y = "Counts") 
 
 abundance_summary
 
-# Creating table of totals by site
-site_sums_year <- abundance %>% 
-  group_by(SITE) %>% 
-  group_by(YEAR) %>% 
-  select("YEAR", "SITE", "COUNT")%>% 
-  mutate(COUNTS = as.numeric("COUNT"))
-  #mutate(totals = sum("COUNT"))
-  #rowsum("COUNT", SITE, reorder = TRUE, na.rm = FALSE) 
-  #spread(COUNT, n)
-  #   rowsum(COUNT, YEAR)
-  # )
-  
-site_sums_year
-# run a t-test to compare 2012 & 2017 at MPAs & non-MPAs
 
+
+# Creating a data frame for 2012 & 2017 IVEE
+IVEE_COUNTS_2012 <- abundance %>% 
+  filter(YEAR == "2012") %>% 
+  filter(SITE == "IVEE")
+
+IVEE_COUNTS_2017 <- abundance %>%
+  filter(YEAR == "2017") %>% 
+  filter(SITE == "IVEE")
+
+# Creating a data frame for 2012 & 2017 NAPL
+NAPL_COUNTS_2012 <- abundance %>% 
+  filter(YEAR == "2012") %>% 
+  filter(SITE == "NAPL")
+
+NAPL_COUNTS_2017 <- abundance %>%
+  filter(YEAR == "2017") %>% 
+  filter(SITE == "NAPL")
+
+# Creating a data frame for 2012 & 2017 CARP
+CARP_COUNTS_2012 <- abundance %>% 
+  filter(YEAR == "2012") %>% 
+  filter(SITE == "CARP")
+
+CARP_COUNTS_2017 <- abundance %>%
+  filter(YEAR == "2017") %>% 
+  filter(SITE == "CARP")
+
+# Creating a data frame for 2012 & 2017 AQUE
+AQUE_COUNTS_2012 <- abundance %>% 
+  filter(YEAR == "2012") %>% 
+  filter(SITE == "AQUE")
+
+AQUE_COUNTS_2017 <- abundance %>%
+  filter(YEAR == "2017") %>% 
+  filter(SITE == "AQUE")
+
+# Creating a data frame for 2012 & 2017 MOHK
+MOHK_COUNTS_2012 <- abundance %>% 
+  filter(YEAR == "2012") %>% 
+  filter(SITE == "MOHK")
+
+MOHK_COUNTS_2017 <- abundance %>%
+  filter(YEAR == "2017") %>% 
+  filter(SITE == "MOHK")
+
+# run t-tests to compare 2012 & 2017 at each site
+
+IVEE_COUNTS_ttest <- t.test(IVEE_COUNTS_2012$COUNT, IVEE_COUNTS_2017$COUNT, var.equal = TRUE, alternative = "less")
+IVEE_COUNTS_ttest
+
+NAPL_COUNTS_ttest <- t.test(NAPL_COUNTS_2012$COUNT, NAPL_COUNTS_2017$COUNT, var.equal = TRUE, alternative = "less")
+NAPL_COUNTS_ttest
+
+CARP_COUNTS_ttest <- t.test(CARP_COUNTS_2012$COUNT, CARP_COUNTS_2017$COUNT, var.equal = TRUE, alternative = "less")
+CARP_COUNTS_ttest
+
+AQUE_COUNTS_ttest <- t.test(AQUE_COUNTS_2012$COUNT, AQUE_COUNTS_2017$COUNT, var.equal = TRUE, alternative = "less")
+AQUE_COUNTS_ttest
+
+MOHK_COUNTS_ttest <- t.test(MOHK_COUNTS_2012$COUNT, MOHK_COUNTS_2017$COUNT, var.equal = TRUE, alternative = "less")
+MOHK_COUNTS_ttest
+
+# Create data frames for MPA & non-MPAs in 2012
+MPA_COUNT_2012 <- abundance %>% 
+  filter(YEAR == "2012") %>% 
+  filter(SITE == "IVEE" | SITE == "NAPL")
+
+MPA_COUNT_2012
+
+MPA_COUNT_2017 <- abundance %>% 
+  filter(YEAR == "2017") %>% 
+  filter(SITE == "IVEE" | SITE == "NAPL")
+
+MPA_COUNT_2017
+
+non_MPA_COUNT_2012 <- abundance %>% 
+  filter(YEAR == "2012") %>% 
+  filter(SITE == "CARP" | SITE == "AQUE" | SITE == "MOHK")
+
+non_MPA_COUNT_2012
+
+non_MPA_COUNT_2017 <- abundance %>% 
+  filter(YEAR == "2017") %>% 
+  filter(SITE == "CARP" | SITE == "AQUE" | SITE == "MOHK")
+
+non_MPA_COUNT_2017
+
+# t-test to determine if significant difference between MPA counts 2012 & 2017
+MPA_2012_2017_t_test <- t.test(MPA_COUNT_2012$COUNT, MPA_COUNT_2017$COUNT, var.equal = TRUE)
+MPA_2012_2017_t_test
+
+# t-test to determine if significant difference between non-MPA counts 2012 & 2017
+non_MPA_2012_2017_t_test <- t.test(non_MPA_COUNT_2012$COUNT, non_MPA_COUNT_2017$COUNT, var.equal = TRUE)
+non_MPA_2012_2017_t_test
+
+# t-test to determine if significant difference between MPA & non-MPA counts 2012
+MPA_vs_non_MPA_2012_t_test <- t.test(MPA_COUNT_2012$COUNT, non_MPA_COUNT_2012$COUNT, var.equal = TRUE)
+MPA_vs_non_MPA_2012_t_test
+
+# t-test to determine if significant difference between MPA & non-MPA counts 2017
+MPA_vs_non_MPA_2017_t_test <- t.test(MPA_COUNT_2017$COUNT, non_MPA_COUNT_2017$COUNT, var.equal = TRUE)
+MPA_vs_non_MPA_2017_t_test
 
 ```
 
@@ -63,7 +152,7 @@ traps_summary <- traps %>%
   theme_classic() +
   scale_y_continuous(expand = c(0,0),  limits = c(0,1300)) +
   scale_x_continuous(expand = c(0,0)) +
-  labs(title = "Lobster abundance counts at 5 locations from 2012-2017",
+  labs(title = "Lobster trap counts at 5 locations from 2012-2017",
   x = "Year",
   y = "# of traps")
 
