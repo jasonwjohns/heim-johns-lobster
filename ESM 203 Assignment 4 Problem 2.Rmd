@@ -9,6 +9,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 ```
 
 ```{r include= FALSE}
@@ -390,7 +391,7 @@ Mean lobsters carapace length in 2017  [`r round(MOHK_2017_mean,2)` ±  `r round
 # Make a new data frame with numbers of lobster that are and are not above the legal minimum of 82.6 mm.  
 
 legal_2017 <- lobster_size_tidy_2017 %>%
-  mutate(above_legal= case_when(SIZE < 82.6 ~ 'No', SIZE >= 82.6 ~ 'Yes')) %>%
+  mutate(above_legal= case_when(SIZE < 82.6 ~ 'Below', SIZE >= 82.6 ~ 'Above')) %>%
   count(SITE, above_legal) %>%
   spread(above_legal, n) %>%
   select(-SITE)
@@ -399,7 +400,7 @@ legal_2017
 
 # Rename rows in legal_2017
 
-rownames(legal_2017) <- c("Arroyo Quemado", " Carpinteria", "Isla Vista", "Mohawk Reef", "Naples Reef")
+rownames(legal_2017) <- c("Arroyo Quemado", "Carpinteria", "Isla Vista", "Mohawk Reef", "Naples Reef")
 
 # Question:  Does the proportion of lobsters of legal size differ significantly across the five sites?
 
@@ -411,10 +412,33 @@ size_x2
 
 legal_2017_prop
 
+# Make a table with proportions of legal lobsters
+
+legal_2017_totals <- legal_2017 %>%
+  mutate(total= Above + Below) %>%
+  mutate(prop_legal= Above/(Above+Below)) 
+  
+legal_2017_totals
+
+
+legal_2017_totals_2 <- legal_2017_totals %>%
+  select(Above, total, prop_legal) %>%
+  round(2)
+
+rownames(legal_2017_totals_2) <- c("Arroyo Quemado", "Carpinteria", "Isla Vista", "Mohawk Reef", "Naples Reef")
+colnames(legal_2017_totals_2) <- c("Legal Lobsters", "Total Lobsters", "Proportion Legal Lobsters")
+  
+legal_2017_table_2 <- kable(legal_2017_totals_2, col.names = c("Legal Lobsters", "Total Lobsters", "Proportion Legal Lobsters")) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"), full_width = FALSE)
+
+legal_2017_table_2
+  
 # Find the proportion of lobsters at each site that are above the legal minimum of 82.6 mm.
 
 size_prop <- prop.table(as.matrix(legal_2017_prop), 1)
 size_prop 
+  
+
 
 ```
 Based on the samples from each Long-Term Ecological Research Site in 2017: Arroyo Quemado (n=67), Carpinteria (n=705), Isla Vista (n=606), Mohawk Reef (n=178), and Naples Reef (n=112), the proportion of lobsters that are above the legal minimum carapace length of 82.6 mm differs significantly between sites (X-squared(4) = 18.497, p< 0.001). 
