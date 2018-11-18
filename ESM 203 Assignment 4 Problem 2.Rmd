@@ -52,6 +52,8 @@ lobster_size_tidy <- expand.dft(count, freq = "COUNT") #Expand data to tidy form
 lobster_size_tidy_2017 <- lobster_size_tidy %>% 
   filter(YEAR == 2017) #Use only observations only from 2017
 
+lobster_size_tidy_2012 <- lobster_size_tidy %>% 
+  filter(YEAR == 2012) #Use only observations only from 2017
 ```
 
 ```{r}
@@ -384,6 +386,45 @@ effect_size
 ```
 Mean lobsters carapace length in 2017  [`r round(MOHK_2017_mean,2)` ±  `r round(MOHK_2017_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=83] was signficantly less than in 2012 [`r round(MOHK_2012_mean,2)` ±  `r round(MOHK_2012_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=178] at Mohawk Reef [t(`r round(lobster_MOHK_ttest$parameter,2)`) = `r round(lobster_MOHK_ttest$statistic,2)`, p < `r round(lobster_MOHK_ttest$p.value,3)`, $\alpha$ = 0.05]. The effect size is moderate (Cohen's d= -0.54). From the samples, lobster carapace length in 2017 was approximately 5.25 mm less than lobster caparace length in 2012. 
 
+## Comparing MPA to nonMPA size in 2012 & 2017
+```{r}
+
+MPA_size_2012 <- lobster_size_tidy %>%
+  filter(YEAR == "2012") %>% 
+  filter(SITE == "NAPL" | SITE == "IVEE")
+MPA_size_2012
+
+MPA_size_2017 <- lobster_size_tidy %>%
+  filter(YEAR == "2017") %>% 
+  filter(SITE == "NAPL" | SITE == "IVEE")
+MPA_size_2017
+
+non_MPA_size_2012 <- lobster_size_tidy %>%
+  filter(YEAR == "2012") %>% 
+  filter(SITE == "AQUE" | SITE == "CARP" | SITE == "MOHK")
+non_MPA_size_2012
+
+non_MPA_size_2017 <- lobster_size_tidy %>%
+  filter(YEAR == "2017") %>% 
+  filter(SITE == "AQUE" | SITE == "CARP" | SITE == "MOHK")
+non_MPA_size_2017
+
+# t-test to see if difference in sizes between MPA & non-MPA in 2012
+MPA_vs_non_MPA_2012_size_t_test <- t.test(MPA_size_2012$SIZE, non_MPA_size_2012$SIZE, alternative = "less")
+MPA_vs_non_MPA_2012_size_t_test
+
+# p = 0.001, so MPA sizes were significantly smaller in 2012 than non-MPA
+
+# t-test to see if difference in sizes between MPA & non-MPA in 2017
+MPA_vs_non_MPA_2017_size_t_test <- t.test(MPA_size_2017$SIZE, non_MPA_size_2017$SIZE, alternative = "less")
+MPA_vs_non_MPA_2017_size_t_test
+
+# p = 0.436, so MPA sizes were not significantly different in 2017 from non-MPA
+
+
+# CONCLUSION: sizes in MPAs were significantly smaller than non-MPAs in 2012, but by 2017 they were not significantly different, suggesting the size may have recovered somewhat
+```
+
 #4 Proportion of legal lobsters at the five sites
 
 ```{r}
@@ -397,6 +438,14 @@ legal_2017 <- lobster_size_tidy_2017 %>%
   select(-SITE)
 
 legal_2017
+
+legal_2012 <- lobster_size_tidy_2012 %>%
+  mutate(above_legal= case_when(SIZE < 82.6 ~ 'Below', SIZE >= 82.6 ~ 'Above')) %>%
+  count(SITE, above_legal) %>%
+  spread(above_legal, n) %>%
+  select(-SITE)
+
+legal_2012
 
 # Rename rows in legal_2017
 
@@ -438,8 +487,45 @@ legal_2017_table_2
 size_prop <- prop.table(as.matrix(legal_2017_prop), 1)
 size_prop 
   
+# New dfs for legal proportions for MPAs & non-MPAs
+legal_2017_SITE <- lobster_size_tidy_2017 %>%
+  mutate(above_legal= case_when(SIZE < 82.6 ~ 'Below', SIZE >= 82.6 ~ 'Above')) %>%
+  count(SITE, above_legal) %>%
+  spread(above_legal, n)
 
+legal_2017_SITE
+
+legal_2017_MPA <- legal_2017_SITE %>%
+  filter(SITE == "IVEE" | SITE == "NAPL")
+
+legal_2017_non_MPA <- legal_2017_SITE %>%
+  filter(SITE == "CARP" | SITE == "AQUE" | SITE == "MOHK")
+
+legal_2012_SITE <- lobster_size_tidy_2012 %>%
+  mutate(above_legal= case_when(SIZE < 82.6 ~ 'Below', SIZE >= 82.6 ~ 'Above')) %>%
+  mutate(management = case_when(SITE == "AQUE" | SITE == "CARP" | SITE == "MOHK" ~ 'non_MPA', SITE == "IVEE" | SITE == "NAPL" ~ 'MPA')) %>% 
+  count(SITE, above_legal) %>%
+  spread(above_legal, n)
+
+legal_2012_SITE
+
+legal_2012_MPA <- legal_2012 %>%
+  filter(SITE == "IVEE" | SITE == "NAPL")
+
+legal_2012_non_MPA <- legal_2012 %>%
+  filter(SITE == "CARP" | SITE == "AQUE" | SITE == "MOHK")
+
+# Chi-square to test for diffs in proportions between legals in MPA & non-MPA in 2012
+
+legal_2017_MPA_vs_non_MPA_prop <- prop.table(as.matrix(legal_2017), 1)
+size_x2 <- chisq.test(legal_2017)
+size_x2
+
+legal_2017_prop
 
 ```
 Based on the samples from each Long-Term Ecological Research Site in 2017: Arroyo Quemado (n=67), Carpinteria (n=705), Isla Vista (n=606), Mohawk Reef (n=178), and Naples Reef (n=112), the proportion of lobsters that are above the legal minimum carapace length of 82.6 mm differs significantly between sites (X-squared(4) = 18.497, p< 0.001). 
+
+
+
 
