@@ -260,8 +260,10 @@ IVEE_2017_sd &lt;-sd(lobster_size_IVEE_2017$SIZE)
 IVEE_2012_mean &lt;- mean(lobster_size_IVEE_2012$SIZE)
 
 IVEE_2012_sd &lt;-sd(lobster_size_IVEE_2012$SIZE)
- 
-# Run a one-sided t-test for each MPA, comparing 2012 to 2017 
+
+IVEE_2017_mean - IVEE_2012_mean</code></pre>
+<pre><code>## [1] 5.375222</code></pre>
+<pre class="r"><code># Run a one-sided t-test for each MPA, comparing 2012 to 2017 
 
 lobster_IVEE_ttest&lt;- t.test(lobster_size_IVEE_2017$SIZE, lobster_size_IVEE_2012$SIZE, var.equal= TRUE, alternative= &quot;greater&quot;)
 
@@ -277,9 +279,25 @@ lobster_IVEE_ttest</code></pre>
 ## sample estimates:
 ## mean of x mean of y 
 ##  71.45215  66.07692</code></pre>
-<pre class="r"><code># Need to do an effect size test using Cohen's D</code></pre>
-<p>Mean lobsters carapace length (mm) in 2017 [71.45 ± 14.32 <span class="math inline">\(mm\)</span> (<span class="math inline">\(\mu\)</span> ± <span class="math inline">\(\sigma\)</span>), n=26] was not signficantly different than in 2012 [66.08 ± 12.09 <span class="math inline">\(mm\)</span> (<span class="math inline">\(\mu\)</span> ± <span class="math inline">\(\sigma\)</span>), n=606] at Isla Vista [t(630) = 1.88, p &lt; 0.03, <span class="math inline">\(\alpha\)</span> = 0.05].</p>
-<p>-also mention effect size and absolute difference in mean</p>
+<pre class="r"><code># Need to do an effect size test using Cohen's D
+# First, make vectors
+
+IVEE_2017_vector &lt;- lobster_size_IVEE_2017 %&gt;%
+  pull(SIZE)
+
+IVEE_2012_vector &lt;- lobster_size_IVEE_2012 %&gt;%
+  pull(SIZE)
+
+effect_size &lt;- cohen.d(IVEE_2017_vector,IVEE_2012_vector)
+effect_size</code></pre>
+<pre><code>## 
+## Cohen's d
+## 
+## d estimate: 0.3775177 (small)
+## 95 percent confidence interval:
+##         inf         sup 
+## -0.01633002  0.77136540</code></pre>
+<p>Mean lobsters carapace length (mm) in 2017 [71.45 ± 14.32 <span class="math inline">\(mm\)</span> (<span class="math inline">\(\mu\)</span> ± <span class="math inline">\(\sigma\)</span>), n=26] was not signficantly different than in 2012 [66.08 ± 12.09 <span class="math inline">\(mm\)</span> (<span class="math inline">\(\mu\)</span> ± <span class="math inline">\(\sigma\)</span>), n=606] at Isla Vista [t(630) = 1.88, p &lt; 0.03, <span class="math inline">\(\alpha\)</span> = 0.05]. The effect size is moderate (Cohen’s d= 0.38). From the samples, lobster carapace length in 2017 was approximately 5.38 mm greater than lobster caparace length in 2012.</p>
 <pre class="r"><code># Run a one-sided, two-sample t-test to see if size in 2017 is greater than in 2012
 
 lobster_size_NAPL_2012 &lt;- lobster_size_tidy %&gt;% 
@@ -300,7 +318,9 @@ NAPL_2012_mean &lt;- mean(lobster_size_NAPL_2012$SIZE)
 
 NAPL_2012_sd &lt;-sd(lobster_size_NAPL_2012$SIZE)
 
-# Run a one-sided t-test for to see if size in 2017 is greater than in 2012
+NAPL_2017_mean - NAPL_2012_mean</code></pre>
+<pre><code>## [1] 3.232143</code></pre>
+<pre class="r"><code># Run a one-sided t-test for to see if size in 2017 is greater than in 2012
 
 lobster_NAPL_ttest&lt;- t.test(lobster_size_NAPL_2017$SIZE, lobster_size_NAPL_2012$SIZE, var.equal= TRUE)
 
@@ -316,8 +336,24 @@ lobster_NAPL_ttest</code></pre>
 ## sample estimates:
 ## mean of x mean of y 
 ##  76.23214  73.00000</code></pre>
-<pre class="r"><code># Lobster sizes at NAPL in 2017 are not significantly different than in 2012</code></pre>
-<p>-need to write significance statment</p>
+<pre class="r"><code># Lobster sizes at NAPL in 2017 are not significantly different than in 2012
+
+NAPL_2017_vector &lt;- lobster_size_NAPL_2017 %&gt;%
+  pull(SIZE)
+
+NAPL_2012_vector &lt;- lobster_size_NAPL_2012 %&gt;%
+  pull(SIZE)
+
+effect_size &lt;- cohen.d(NAPL_2017_vector,NAPL_2012_vector)
+effect_size</code></pre>
+<pre><code>## 
+## Cohen's d
+## 
+## d estimate: 0.2834216 (small)
+## 95 percent confidence interval:
+##        inf        sup 
+## -0.5473456  1.1141889</code></pre>
+<p>Mean lobsters carapace length (mm) in 2017 [76.23 ± 11.39 <span class="math inline">\(mm\)</span> (<span class="math inline">\(\mu\)</span> ± <span class="math inline">\(\sigma\)</span>), n=6] was not signficantly different than in 2012 [73 ± 11.75 <span class="math inline">\(mm\)</span> (<span class="math inline">\(\mu\)</span> ± <span class="math inline">\(\sigma\)</span>), n=112] at Naples Reef [t(630) = 0.68, p &lt; 0.5, <span class="math inline">\(\alpha\)</span> = 0.05]. The effect size is small (Cohen’s d= 0.28). From the samples, lobster carapace length in 2017 was approximately 3.23 mm greater than lobster caparace length in 2012.</p>
 <pre class="r"><code># One-sided t-test for AQUE nonMPA 
 
 lobster_size_AQUE_2012 &lt;- lobster_size_tidy %&gt;% 
@@ -342,8 +378,36 @@ lobster_AQUE_ttest</code></pre>
 ## sample estimates:
 ## mean of x mean of y 
 ##  73.89552  71.00000</code></pre>
-<pre class="r"><code># Lobster sizes at NAPL in 2017 are not significantly different than in 2012</code></pre>
-<p>-need to write significance statment</p>
+<pre class="r"><code># Find the mean and sd for AQUE for 2012 and 2017
+
+AQUE_2017_mean &lt;- mean(lobster_size_AQUE_2017$SIZE)
+
+AQUE_2017_sd &lt;-sd(lobster_size_AQUE_2017$SIZE)
+ 
+AQUE_2012_mean &lt;- mean(lobster_size_AQUE_2012$SIZE)
+
+AQUE_2012_sd &lt;-sd(lobster_size_AQUE_2012$SIZE)
+
+AQUE_2017_mean - AQUE_2012_mean</code></pre>
+<pre><code>## [1] 2.895522</code></pre>
+<pre class="r"><code># Lobster sizes at AQUE in 2017 are not significantly different than in 2012
+
+AQUE_2017_vector &lt;- lobster_size_AQUE_2017 %&gt;%
+  pull(SIZE)
+
+AQUE_2012_vector &lt;- lobster_size_AQUE_2012 %&gt;%
+  pull(SIZE)
+
+effect_size &lt;- cohen.d(AQUE_2017_vector,AQUE_2012_vector)
+effect_size</code></pre>
+<pre><code>## 
+## Cohen's d
+## 
+## d estimate: 0.2563169 (small)
+## 95 percent confidence interval:
+##        inf        sup 
+## -0.1479675  0.6606014</code></pre>
+<p>Mean lobsters carapace length (mm) in 2017 [73.9 ± 11.89 <span class="math inline">\(mm\)</span> (<span class="math inline">\(\mu\)</span> ± <span class="math inline">\(\sigma\)</span>), n=38] was not signficantly different than in 2012 [71 ± 10.15 <span class="math inline">\(mm\)</span> (<span class="math inline">\(\mu\)</span> ± <span class="math inline">\(\sigma\)</span>), n=67] at Naples Reef [t(103) = 1.26, p &lt; 0.21, <span class="math inline">\(\alpha\)</span> = 0.05]. The effect size is small (Cohen’s d= 0.26). From the samples, lobster carapace length in 2017 was approximately 2.90 mm greater than lobster caparace length in 2012.</p>
 <pre class="r"><code># One-sided t-test for CARP nonMPA 
 
 lobster_size_CARP_2012 &lt;- lobster_size_tidy %&gt;% 
@@ -368,8 +432,37 @@ lobster_CARP_ttest</code></pre>
 ## sample estimates:
 ## mean of x mean of y 
 ##  72.22979  74.35897</code></pre>
+<pre class="r"><code># Find the mean and sd for CARP for 2012 and 2017
+
+CARP_2017_mean &lt;- mean(lobster_size_CARP_2017$SIZE)
+
+CARP_2017_sd &lt;-sd(lobster_size_CARP_2017$SIZE)
+ 
+CARP_2012_mean &lt;- mean(lobster_size_CARP_2012$SIZE)
+
+CARP_2012_sd &lt;-sd(lobster_size_CARP_2012$SIZE)
+
+CARP_2017_mean - CARP_2012_mean</code></pre>
+<pre><code>## [1] -2.129187</code></pre>
+<pre class="r"><code># Lobster sizes at CARP in 2017 are not significantly different than in 2012
+
+CARP_2017_vector &lt;- lobster_size_CARP_2017 %&gt;%
+  pull(SIZE)
+
+CARP_2012_vector &lt;- lobster_size_CARP_2012 %&gt;%
+  pull(SIZE)
+
+effect_size &lt;- cohen.d(CARP_2017_vector,CARP_2012_vector)
+effect_size</code></pre>
+<pre><code>## 
+## Cohen's d
+## 
+## d estimate: -0.1594364 (negligible)
+## 95 percent confidence interval:
+##         inf         sup 
+## -0.39380971  0.07493682</code></pre>
 <pre class="r"><code># Lobster sizes at CARP in 2017 are not significantly greater than in 2012</code></pre>
-<p>-need to write significance statment</p>
+<p>Mean lobsters carapace length (mm) in 2017 [72.23 ± 13.21 <span class="math inline">\(mm\)</span> (<span class="math inline">\(\mu\)</span> ± <span class="math inline">\(\sigma\)</span>), n=78] was not signficantly different than in 2012 [74.36 ± 14.62 <span class="math inline">\(mm\)</span> (<span class="math inline">\(\mu\)</span> ± <span class="math inline">\(\sigma\)</span>), n=705] at Naples Reef [t(103) = -1.34, p &lt; 0.182, <span class="math inline">\(\alpha\)</span> = 0.05]. The effect size is small (Cohen’s d= -0.16). From the samples, lobster carapace length in 2017 was approximately 2.13 mm less than lobster caparace length in 2012.</p>
 <pre class="r"><code># One-sided t-test for MOHK nonMPA 
 
 lobster_size_MOHK_2012 &lt;- lobster_size_tidy %&gt;% 
@@ -394,8 +487,38 @@ lobster_MOHK_ttest</code></pre>
 ## sample estimates:
 ## mean of x mean of y 
 ##  72.00000  77.25301</code></pre>
-<pre class="r"><code># Lobster sizes are signficantly different at MOHK in 2012 and 2017</code></pre>
-<p>-need to write significance statment</p>
+<pre class="r"><code># Lobster sizes are signficantly different at MOHK in 2012 and 2017
+
+# Find the mean and sd for MOHK for 2012 and 2017
+
+MOHK_2017_mean &lt;- mean(lobster_size_MOHK_2017$SIZE)
+
+MOHK_2017_sd &lt;-sd(lobster_size_MOHK_2017$SIZE)
+ 
+MOHK_2012_mean &lt;- mean(lobster_size_MOHK_2012$SIZE)
+
+MOHK_2012_sd &lt;-sd(lobster_size_MOHK_2012$SIZE)
+
+MOHK_2017_mean - MOHK_2012_mean</code></pre>
+<pre><code>## [1] -5.253012</code></pre>
+<pre class="r"><code># Lobster sizes at MOHK in 2017 are not significantly different than in 2012
+
+MOHK_2017_vector &lt;- lobster_size_MOHK_2017 %&gt;%
+  pull(SIZE)
+
+MOHK_2012_vector &lt;- lobster_size_MOHK_2012 %&gt;%
+  pull(SIZE)
+
+effect_size &lt;- cohen.d(MOHK_2017_vector,MOHK_2012_vector)
+effect_size</code></pre>
+<pre><code>## 
+## Cohen's d
+## 
+## d estimate: -0.5408116 (medium)
+## 95 percent confidence interval:
+##        inf        sup 
+## -0.8066597 -0.2749635</code></pre>
+<p>Mean lobsters carapace length (mm) in 2017 [72 ± 9.28 <span class="math inline">\(mm\)</span> (<span class="math inline">\(\mu\)</span> ± <span class="math inline">\(\sigma\)</span>), n=83] was signficantly less than in 2012 [77.25 ± 10.59 <span class="math inline">\(mm\)</span> (<span class="math inline">\(\mu\)</span> ± <span class="math inline">\(\sigma\)</span>), n=178] at Naples Reef [t(259) = -4.07, p &lt; 0, <span class="math inline">\(\alpha\)</span> = 0.05]. The effect size is moderate (Cohen’s d= -0.54). From the samples, lobster carapace length in 2017 was approximately 5.25 mm less than lobster caparace length in 2012.</p>
 </div>
 <div id="proportion-of-legal-lobsters-at-the-five-sites" class="section level1">
 <h1>4 Proportion of legal lobsters at the five sites</h1>
