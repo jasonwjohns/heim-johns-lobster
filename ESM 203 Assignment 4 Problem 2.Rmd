@@ -173,6 +173,8 @@ IVEE_2017_sd <-sd(lobster_size_IVEE_2017$SIZE)
 IVEE_2012_mean <- mean(lobster_size_IVEE_2012$SIZE)
 
 IVEE_2012_sd <-sd(lobster_size_IVEE_2012$SIZE)
+
+IVEE_2017_mean - IVEE_2012_mean
  
 # Run a one-sided t-test for each MPA, comparing 2012 to 2017 
 
@@ -181,12 +183,22 @@ lobster_IVEE_ttest<- t.test(lobster_size_IVEE_2017$SIZE, lobster_size_IVEE_2012$
 lobster_IVEE_ttest
 
 # Need to do an effect size test using Cohen's D
+# First, make vectors
+
+IVEE_2017_vector <- lobster_size_IVEE_2017 %>%
+  pull(SIZE)
+
+IVEE_2012_vector <- lobster_size_IVEE_2012 %>%
+  pull(SIZE)
+
+effect_size <- cohen.d(IVEE_2017_vector,IVEE_2012_vector)
+effect_size
+
 
 
 ```
-Mean lobsters carapace length (mm) in 2017  [`r round(IVEE_2017_mean,2)` ±  `r round(IVEE_2017_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=26] was not signficantly different than in 2012 [`r round(IVEE_2012_mean,2)` ±  `r round(IVEE_2012_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=606] at Isla Vista [t(`r round(lobster_IVEE_ttest$parameter,2)`) = `r round(lobster_IVEE_ttest$statistic,2)`, p < `r round(lobster_IVEE_ttest$p.value,3)`, $\alpha$ = 0.05]. 
+Mean lobsters carapace length (mm) in 2017  [`r round(IVEE_2017_mean,2)` ±  `r round(IVEE_2017_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=26] was not signficantly different than in 2012 [`r round(IVEE_2012_mean,2)` ±  `r round(IVEE_2012_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=606] at Isla Vista [t(`r round(lobster_IVEE_ttest$parameter,2)`) = `r round(lobster_IVEE_ttest$statistic,2)`, p < `r round(lobster_IVEE_ttest$p.value,3)`, $\alpha$ = 0.05]. The effect size is moderate (Cohen's d= 0.38). From the samples, lobster carapace length in 2017 was approximately 5.38 mm greater than lobster caparace length in 2012. 
 
--also mention effect size and absolute difference in mean
 
 ```{r}
 
@@ -218,8 +230,17 @@ lobster_NAPL_ttest
 
 # Lobster sizes at NAPL in 2017 are not significantly different than in 2012
 
+NAPL_2017_vector <- lobster_size_NAPL_2017 %>%
+  pull(SIZE)
+
+NAPL_2012_vector <- lobster_size_NAPL_2012 %>%
+  pull(SIZE)
+
+effect_size <- cohen.d(NAPL_2017_vector,NAPL_2012_vector)
+effect_size
+
 ```
--need to write significance statment
+Mean lobsters carapace length (mm) in 2017  [`r round(IVEE_2017_mean,2)` ±  `r round(IVEE_2017_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=26] was not signficantly different than in 2012 [`r round(IVEE_2012_mean,2)` ±  `r round(IVEE_2012_sd,2)` $mm$ ($\mu$ ± $\sigma$), n=606] at Isla Vista [t(`r round(lobster_IVEE_ttest$parameter,2)`) = `r round(lobster_IVEE_ttest$statistic,2)`, p < `r round(lobster_IVEE_ttest$p.value,3)`, $\alpha$ = 0.05]. The effect size is moderate (Cohen's d= 0.38). From the samples, lobster carapace length in 2017 was approximately 5.38 mm greater than lobster caparace length in 2012. 
 
 ```{r}
 
